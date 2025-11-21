@@ -10,7 +10,7 @@ calcStMaxScrapShare <- function(subtype = "BIR") {
   # ---- list all available subtypes with functions doing all the work ----
   switchboard <- list(
     "BIR" = function() {
-      scrapShares <- readSource("BIR", subtype = "scrapShare", convert = FALSE)
+      scrapShares <- readSource("BIR", subtype = "scrapShare", convert = F)
 
       # Remove turkey as it is an outlier
       scrapShares <- scrapShares[!getRegions(scrapShares) == "Turkey", , ]
@@ -32,19 +32,19 @@ calcStMaxScrapShare <- function(subtype = "BIR") {
         x = maxScrapShare,
         weight = NULL,
         unit = 1,
+        isocountries = FALSE,
         description = "Maximum scrap share in production"
       )
 
       return(final)
-    },
-    NULL
+    }
   )
   # ---- check if the subtype called is available ----
   if (is_empty(intersect(subtype, names(switchboard)))) {
-    stop(paste(
+    stop(
       "Invalid subtype -- supported subtypes are:",
-      names(switchboard)
-    ))
+      paste0(names(switchboard), collapse = ", ")
+    )
   } else {
     # ---- load data and do whatever ----
     return(switchboard[[subtype]]())
